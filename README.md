@@ -88,4 +88,5 @@ Solution: Implemented proper useEffect cleanup patterns to unsubscribe from chan
 ## Deployment
 
 GitHub: Public repository for version control.
+
 Vercel: Automated CI/CD deployment.
