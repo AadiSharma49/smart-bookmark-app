@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark App
 
-## Getting Started
+##  Overview
+This is a full-stack **Smart Bookmark application** built using **Next.js (App Router)**, **Supabase**, and **Tailwind CSS**. 
 
-First, run the development server:
+The app allows users to securely manage personal bookmarks with Google OAuth authentication and real-time synchronization across devices and tabs.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+##  Features
+- **Google OAuth Authentication:** Secure login without the need for email/password.
+- **Private Bookmarks:** Database-level security ensures users only see their own data.
+- **Full CRUD Support:** - Add bookmarks (Title + URL)
+  - Edit existing bookmarks
+  - Delete bookmarks with **Optimistic UI** for instant feedback.
+- **Real-time Synchronization:** Updates reflect across multiple tabs instantly without refreshing.
+- **Fully Deployed:** Optimized for and hosted on **Vercel**.
+
+---
+
+##  Tech Stack
+
+| Category | Technology |
+| :--- | :--- |
+| **Framework** | Next.js (App Router) |
+| **Backend/Database** | Supabase (PostgreSQL) |
+| **Authentication** | Google OAuth via Supabase Auth |
+| **Security** | Row Level Security (RLS) |
+| **Styling** | Tailwind CSS |
+| **Deployment** | Vercel |
+
+---
+
+##  Database Security
+Row Level Security (RLS) is strictly enabled on the `bookmarks` table. Policies enforce the following rules:
+
+* **SELECT:** Users can only view their own bookmarks.
+* **INSERT:** Users can only add bookmarks where `user_id == auth.uid()`.
+* **UPDATE/DELETE:** Users can only modify or remove their own records.
+
+> This ensures true database-level isolation and prevents unauthorized data access.
+
+---
+
+##  Realtime Implementation
+Supabase Realtime is implemented to keep the UI in sync.
+
+```javascript
+const channel = supabase
+  .channel("bookmarks-changes")
+  .on(
+    "postgres_changes", 
+    { event: "*", schema: "public", table: "bookmarks" }, 
+    (payload) => 
+  )
+  .subscribe();
 ```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## AI Tools Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+During development, AI tools were leveraged for architecture planning, debugging OAuth integrations, and RLS configuration.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* ChatGPT (GPT-5)
+* Claude Code
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Challenges Faced
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Google OAuth Redirect Issues
+Problem: Encountered redirect_uri_mismatch and provider-not-enabled errors.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Solution: Correctly configured the Supabase callback URL and added the exact redirect URI in the Google Cloud Console.
 
-## Deploy on Vercel
+3. Supabase RLS Blocking Queries
+Problem: Initial SELECT and INSERT operations failed after enabling RLS.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Solution: Created granular policies using auth.uid() = user_id and clarified the distinction between USING and WITH CHECK clauses.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Realtime Subscription Cleanup
+Problem: Potential for memory leaks or duplicate listeners.
+
+Solution: Implemented proper useEffect cleanup patterns to unsubscribe from channels on component unmount.
+
+---
+
+## Deployment
+
+GitHub: Public repository for version control.
+Vercel: Automated CI/CD deployment.
