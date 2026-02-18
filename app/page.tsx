@@ -247,13 +247,13 @@ const handleUpdateBookmark = async (id: string) => {
         <div className="flex gap-2">
           <button
             onClick={() => handleUpdateBookmark(bookmark.id)}
-            className="bg-green-500 text-white px-3 py-1 rounded text-sm"
+            className="bg-green-500 text-white px-3 py-1 rounded text-sm cursor-pointer"
           >
             Save
           </button>
           <button
             onClick={() => setEditingId(null)}
-            className="bg-gray-500 text-white px-3 py-1 rounded text-sm"
+            className="bg-gray-500 text-white px-3 py-1 rounded text-sm cursor-pointer"
           >
             Cancel
           </button>
@@ -282,14 +282,14 @@ const handleUpdateBookmark = async (id: string) => {
               setEditTitle(bookmark.title);
               setEditUrl(bookmark.url);
             }}
-            className="bg-yellow-500 text-black px-3 py-1 rounded text-sm"
+            className="bg-yellow-500 text-black px-3 py-1 rounded text-sm cursor-pointer"
           >
             Edit
           </button>
 
           <button
             onClick={() => handleDeleteBookmark(bookmark.id)}
-            className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+            className="bg-red-500 text-white px-3 py-1 rounded text-sm cursor-pointer"
           >
             Delete
           </button>
