@@ -8,6 +8,9 @@ export default function Home() {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editUrl, setEditUrl] = useState("");
 
   // 🔥 Fetch Bookmarks
   const fetchBookmarks = async () => {
@@ -114,6 +117,25 @@ export default function Home() {
     await fetchBookmarks(); // fallback if something fails
   }
 };
+const handleUpdateBookmark = async (id: string) => {
+  const { error } = await supabase
+    .from("bookmarks")
+    .update({
+      title: editTitle,
+      url: editUrl,
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Update error:", error);
+    return;
+  }
+
+  setEditingId(null);
+  setEditTitle("");
+  setEditUrl("");
+};
+
 
   // 🔐 Not Logged In UI
   if (!session) {
@@ -205,32 +227,77 @@ export default function Home() {
   ) : (
     <div className="space-y-3">
       {bookmarks.map((bookmark) => (
-        <div
-          key={bookmark.id}
-          className="bg-gray-900 p-4 rounded-lg flex justify-between items-center"
-        >
-          <div>
-            <p className="text-white font-medium">
-              {bookmark.title}
-            </p>
-            <a
-              href={bookmark.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 text-sm"
-            >
-              {bookmark.url}
-            </a>
-          </div>
+  <div
+    key={bookmark.id}
+    className="bg-gray-900 p-4 rounded-lg"
+  >
+    {editingId === bookmark.id ? (
+      <div className="space-y-2">
+        <input
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+          className="w-full bg-gray-800 text-white px-3 py-2 rounded"
+        />
+        <input
+          value={editUrl}
+          onChange={(e) => setEditUrl(e.target.value)}
+          className="w-full bg-gray-800 text-white px-3 py-2 rounded"
+        />
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleUpdateBookmark(bookmark.id)}
+            className="bg-green-500 text-white px-3 py-1 rounded text-sm"
+          >
+            Save
+          </button>
+          <button
+            onClick={() => setEditingId(null)}
+            className="bg-gray-500 text-white px-3 py-1 rounded text-sm"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ) : (
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-white font-medium">
+            {bookmark.title}
+          </p>
+          <a
+            href={bookmark.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 text-sm"
+          >
+            {bookmark.url}
+          </a>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setEditingId(bookmark.id);
+              setEditTitle(bookmark.title);
+              setEditUrl(bookmark.url);
+            }}
+            className="bg-yellow-500 text-black px-3 py-1 rounded text-sm"
+          >
+            Edit
+          </button>
 
           <button
             onClick={() => handleDeleteBookmark(bookmark.id)}
-            className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition text-sm"
+            className="bg-red-500 text-white px-3 py-1 rounded text-sm"
           >
             Delete
           </button>
         </div>
-      ))}
+      </div>
+    )}
+  </div>
+))}
     </div>
   )}
 </div>
