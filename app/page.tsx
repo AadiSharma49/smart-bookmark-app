@@ -12,6 +12,7 @@ export default function Home() {
   const [editTitle, setEditTitle] = useState("");
   const [editUrl, setEditUrl] = useState("");
 
+  // 🔥 Fetch Bookmarks
   const fetchBookmarks = async () => {
     const { data, error } = await supabase
       .from("bookmarks")
@@ -100,7 +101,7 @@ export default function Home() {
     setTitle("");
     setUrl("");
 
-    await fetchBookmarks();
+    await fetchBookmarks(); // 🔥 Refresh after insert
   };
 
   const handleDeleteBookmark = async (id: string) => {
@@ -113,7 +114,7 @@ export default function Home() {
 
     if (error) {
       console.error("Delete error:", error);
-      await fetchBookmarks(); 
+      await fetchBookmarks(); // fallback if something fails
     }
   };
 
@@ -139,7 +140,7 @@ export default function Home() {
     setEditingId(null);
     setEditTitle("");
     setEditUrl("");
-    await fetchBookmarks(); 
+    await fetchBookmarks(); // 🔥 Refresh after update
   };
 
   // 🔐 Not Logged In UI
@@ -287,17 +288,6 @@ export default function Home() {
                       </div>
 
                       <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setEditingId(bookmark.id);
-                            setEditTitle(bookmark.title);
-                            setEditUrl(bookmark.url);
-                          }}
-                          className="bg-yellow-500 text-black px-3 py-1 rounded text-sm cursor-pointer hover:bg-yellow-600 transition"
-                        >
-                          Edit
-                        </button>
-
                         <button
                           onClick={() => handleDeleteBookmark(bookmark.id)}
                           className="bg-red-500 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-red-600 transition"
