@@ -11,7 +11,6 @@ The app allows users to securely manage personal bookmarks with Google OAuth aut
 - **Google OAuth Authentication:** Secure login without the need for email/password.
 - **Private Bookmarks:** Database-level security ensures users only see their own data.
 - **Full CRUD Support:** - Add bookmarks (Title + URL)
-  - Edit existing bookmarks
   - Delete bookmarks with **Optimistic UI** for instant feedback.
 - **Real-time Synchronization:** Updates reflect across multiple tabs instantly without refreshing.
 - **Fully Deployed:** Optimized for and hosted on **Vercel**.
